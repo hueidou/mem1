@@ -84,19 +84,29 @@ curl -X POST http://127.0.0.1:8012/memory/search \
 
 ```
 mem1/
-├── server.py      # FastAPI application (~150 lines)
-├── index.html     # Browser-based management UI
-├── mem0.db        # SQLite database (auto-created)
-└── README.md      # This file
+├── server.py        # FastAPI application (~150 lines)
+├── index.html       # Browser-based management UI
+├── mem0.db          # SQLite database (auto-created)
+├── cf-worker/       # Cloudflare Worker version (KV storage)
+│   ├── src/index.js
+│   ├── wrangler.toml
+│   └── README.md
+└── README.md        # This file
 ```
 
 ## Deployment
+
+### Python (self-hosted)
 
 The service typically runs behind a reverse proxy or tunnel (e.g. [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)). Start it with:
 
 ```bash
 nohup python3 server.py &
 ```
+
+### Cloudflare Worker (edge)
+
+See [cf-worker/README.md](cf-worker/README.md) for deploying the Workers + KV version at the edge — no server management needed.
 
 ## Agent Prompt
 
