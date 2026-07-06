@@ -85,6 +85,51 @@ The service typically runs behind a reverse proxy or tunnel (e.g. [Cloudflare Tu
 nohup python3 server.py &
 ```
 
+## Agent Prompt
+
+When an AI agent calls `GET /`, it receives the following usage guide embedded in the JSON response. This tells the agent how to use mem1:
+
+```
+# Mem1 - Agent Memory Service
+
+Mem1 is a lightweight persistent memory service for AI agents. It uses simple SQLite + keyword matching.
+
+## Authentication
+All requests require header: `Authorization: Bearer Pa$$w0rd`
+
+## Endpoints
+
+### GET /
+Returns this usage guide. Read this first when you encounter a Mem1 server.
+
+### GET /health
+Health check.
+
+### GET /ui or /ui/
+Browser-based UI for all API operations (requires API key input in browser).
+
+### POST /memory/add
+Save a memory.
+Body: {"user_id": "<who>", "agent_id": "<which agent>", "messages": "<content to remember>"}
+
+### POST /memory/search
+Search memories by keyword.
+Body: {"user_id": "<who>", "agent_id": "<which agent>", "query": "<keywords>", "limit": 5}
+
+### GET /memory/{user_id}
+Get all memories for a user.
+Query param: `agent_id` (default: "default")
+
+### POST /memory/clear/{user_id}
+Clear all memories for a user.
+
+## Best Practices
+1. Save important info immediately after learning it.
+2. Use short, structured content (plain text, JSON, or markdown).
+3. Search before asking the user for information already stored.
+4. user_id is typically the human's name; agent_id identifies which agent saved it.
+```
+
 ## Customization
 
 To change the API key, edit the `API_KEY` variable at the top of `server.py`. The database path is configured via `DB_PATH`.
