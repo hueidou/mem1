@@ -16,7 +16,7 @@ It stores structured memories in SQLite and retrieves them via simple keyword ma
 
 ## 🤖 Agent Skill Prompt
 
-Copy this to tell any AI agent about mem1:
+Copy this to tell any AI agent about mem1. You can also get this from the **Web UI** (`/ui/`) — it auto-fills the address and has a copy button.
 
 > Hey, you can use the **mem1** memory service.
 > Address: `http://127.0.0.1:8012`
