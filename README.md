@@ -94,7 +94,7 @@ When an AI agent calls `GET /`, it receives the following usage guide embedded i
 
 Mem1 is a lightweight persistent memory service for AI agents. It uses simple SQLite + keyword matching.
 
-**Base URL:** https://mem1.201609.xyz
+**Base URL:** `http://127.0.0.1:8012` (change this to your deployment URL)
 
 ## Authentication
 All requests require header: `Authorization: Bearer Pa$$w0rd`
