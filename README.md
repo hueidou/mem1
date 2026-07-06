@@ -21,6 +21,7 @@ Copy this to tell any AI agent about mem1. You can also get this from the **Web 
 > Hey, you can use the **mem1** memory service.
 > Address: `http://127.0.0.1:8012`
 > Auth: `Bearer Pa$$w0rd`
+> User: `alice`
 >
 > Hit the root endpoint first — it'll tell you everything you need.
 
