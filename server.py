@@ -12,7 +12,7 @@ AGENT_PROMPT = """# Mem1 - Agent Memory Service
 
 Mem1 is a lightweight persistent memory service for AI agents. It uses simple SQLite + keyword matching.
 
-**Base URL:** `http://127.0.0.1:8012` (change this to your deployment URL)
+**Base URL:** `{base_url}`
 
 ## Authentication
 All requests require header: `Authorization: Bearer Pa$$w0rd`
@@ -80,12 +80,13 @@ class SearchRequest(BaseModel):
 BASE_DIR = Path(__file__).parent
 
 @app.get("/")
-async def root():
+async def root(request: Request):
+    base_url = str(request.base_url).rstrip("/")
     return {
         "status": "ok",
         "service": "mem1",
         "version": "1.0.0",
-        "agent_prompt": AGENT_PROMPT,
+        "agent_prompt": AGENT_PROMPT.replace("{base_url}", base_url),
         "usage": "Read agent_prompt field for complete API documentation and agent instructions."
     }
 
