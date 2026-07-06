@@ -1,23 +1,14 @@
-name = "mem1"
+name = "mem1-cf"
 main = "src/index.js"
 compatibility_date = "2025-01-01"
+account_id = "b04d087496afbef848ef0732834daaf8"
+workers_dev = true
 
 # ── KV Namespace ──────────────────────────────────────────────────────────
-# Create a KV namespace and bind it:
-#   npx wrangler kv:namespace create "KV_NAMESPACE"
-# Then paste the resulting id below.
 kv_namespaces = [
-  { binding = "KV_NAMESPACE", id = "YOUR_KV_NAMESPACE_ID" }
+  { binding = "KV_NAMESPACE", id = "9af60c4b7fb34d22ac29dfd71e29ebd6" }
 ]
 
 # ── Environment Variables ─────────────────────────────────────────────────
-# API key for Bearer authentication (set as secret for production):
-#   npx wrangler secret put API_KEY
 [vars]
 API_KEY = "Pa$$w0rd"
-
-# ── Routes ────────────────────────────────────────────────────────────────
-# Uncomment and set your domain/route to deploy:
-# routes = [
-#   { pattern = "mem1.example.com", custom_domain = true }
-# ]
