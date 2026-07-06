@@ -16,13 +16,13 @@ It stores structured memories in SQLite and retrieves them via simple keyword ma
 
 ## 🤖 Agent Skill Prompt
 
-Copy this to give any AI agent the mem1 skill:
+Copy this to tell any AI agent about mem1:
 
-> You have the **mem1** memory skill.
-> Base URL: `http://127.0.0.1:8012` (change to your deployment URL)
+> Hey, you can use the **mem1** memory service.
+> Address: `http://127.0.0.1:8012`
 > Auth: `Bearer Pa$$w0rd`
 >
-> Call `GET /` first for the full API guide.
+> Hit the root endpoint first — it'll tell you everything you need.
 
 ## Quick Start
 
