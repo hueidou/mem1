@@ -34,6 +34,14 @@ pre{background:#f5f5f5;padding:8px;border-radius:4px;overflow-x:auto;font-size:1
 <div id="msgBox" class="msg"></div>
 
 <div class="section">
+<h3>🤖 Agent Skill Prompt</h3>
+<p style="color:#666;font-size:13px;margin:4px 0 10px">Give this to any AI agent to let it use mem1. Fill in your details, then copy.</p>
+<input type="text" id="skillUserId" placeholder="Your User ID" style="width:200px">
+<button class="btn-primary" onclick="copySkillPrompt()" style="margin-top:6px">📋 Copy Prompt</button>
+<pre id="skillPreview" style="margin-top:8px;background:#f0f4f8;padding:12px;border-radius:4px;font-size:13px;line-height:1.6">Loading...</pre>
+</div>
+
+<div class="section">
 <h3>View User Memories</h3>
 <div class="flex"><input type="text" id="viewUserId" placeholder="User ID" style="width:200px">
 <button class="btn-primary" onclick="viewMemories()">View</button></div>
@@ -118,6 +126,26 @@ async function clearMemories(){
  const d=await r.json();
  if(!r.ok){msg('err',d.detail||'Error');return}
  msg('ok',d.message)
+}
+
+
+// ── Skill prompt ───────────────────────────────────────────────
+function updateSkillPrompt(){
+ const addr=window.location.origin;
+ const key=document.getElementById('apiKey').value||'<your-api-key>';
+ const uid=document.getElementById('skillUserId').value||'<your-user-id>';
+ document.getElementById('skillPreview').textContent=
+  'Hey, you can use the mem1 memory service.\n'+
+  'Address: '+addr+'\nAuth: Bearer '+key+'\nUser: '+uid+'\n\n'+
+  "Hit the root endpoint first — it'll tell you everything you need.";
+}
+document.getElementById('apiKey').addEventListener('input',updateSkillPrompt);
+document.getElementById('skillUserId').addEventListener('input',updateSkillPrompt);
+updateSkillPrompt();
+
+function copySkillPrompt(){
+ const t=document.getElementById('skillPreview').textContent;
+ navigator.clipboard.writeText(t).then(()=>msg('ok','Copied!')).catch(()=>msg('err','Copy failed'));
 }
 
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
