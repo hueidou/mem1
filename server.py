@@ -37,9 +37,6 @@ Query param: `agent_id` (default: "default")
 ### POST /memory/clear/{user_id}
 Clear all memories for a user.
 
-### GET /admin/memories
-Browse all memories as an HTML table in a web browser. Requires auth header.
-
 ## Best Practices
 1. Save important info immediately after learning it.
 2. Use short, structured content (plain text, JSON, or markdown).
@@ -74,40 +71,61 @@ class MemRequest(BaseModel):
 class SearchRequest(BaseModel):
     user_id: str; agent_id: str = "default"; query: str; limit: int = 5
 
+HTML_CSS = """body{font-family:sans-serif;margin:20px;max-width:1200px}
+table{border-collapse:collapse;width:100%;margin-top:10px}
+th,td{border:1px solid #ddd;padding:6px;text-align:left;font-size:13px}
+th{background:#4CAF50;color:white;position:sticky;top:0}
+tr:nth-child(even){background:#f2f2f2}
+pre{background:#f5f5f5;padding:10px;border-radius:4px;overflow-x:auto}
+input,button{padding:6px 12px;margin:2px;font-size:14px}
+.error{color:red}"""
+
 @app.get("/")
-async def root():
-    return {
-        "status": "ok",
-        "service": "mem1",
-        "version": "1.0.0",
-        "agent_prompt": AGENT_PROMPT,
-        "usage": "Read agent_prompt field for complete API documentation and agent instructions."
-    }
+async def root(request: Request, user_id: str = "", api_key: str = ""):
+    rows = []
+    error = ""
+    if user_id and api_key:
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            rows = conn.execute(
+                "SELECT id, agent_id, content, timestamp FROM memories WHERE user_id=? ORDER BY timestamp DESC",
+                (user_id,)
+            ).fetchall()
+        except Exception as e:
+            error = str(e)
+        conn.close()
+    trs = "".join(
+        f"<tr><td>{r[0][:8]}</td><td>{r[2]}</td><td>{r[1]}</td><td>{r[3][:19]}</td></tr>"
+        for r in rows
+    ) if rows else "<tr><td colspan='4' style='text-align:center;color:#999'>No memories found</td></tr>"
+    return HTMLResponse(f"""<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8"><title>Mem1</title><style>{HTML_CSS}</style></head>
+<body>
+<h2>Mem1 - Agent Memory Service</h2>
+<div style="display:flex;gap:20px;flex-wrap:wrap">
+<div style="flex:1;min-width:300px">
+<h3>使用说明</h3>
+<pre>{AGENT_PROMPT}</pre>
+</div>
+<div style="flex:1;min-width:400px">
+<h3>查询记忆</h3>
+<form method="get" action="/">
+<label>User ID: <input type="text" name="user_id" value="{user_id}" required></label><br>
+<label>API Key: <input type="password" name="api_key" value="{api_key}" required></label><br>
+<button type="submit">查询</button>
+</form>
+{('<p class="error">' + error + '</p>') if error else ''}
+<h3>记忆列表 ({len(rows)})</h3>
+<div style="max-height:600px;overflow-y:auto">
+<table><thead><tr><th>ID</th><th>Content</th><th>Agent</th><th>Time</th></tr></thead>
+<tbody>{trs}</tbody></table></div>
+</div></div></body></html>""")
 
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
 
-@app.get("/admin/memories")
-async def admin_memories(request: Request):
-    await verify_auth(request)
-    conn = sqlite3.connect(DB_PATH)
-    rows = conn.execute("SELECT id, user_id, agent_id, content, timestamp FROM memories ORDER BY timestamp DESC").fetchall()
-    conn.close()
-    trs = "".join(
-        f"<tr><td>{r[0][:8]}</td><td>{r[1]}</td><td>{r[2]}</td>"
-        f"<td>{r[3][:120]}{'...' if len(r[3]) > 120 else ''}</td>"
-        f"<td>{r[4][:19]}</td></tr>"
-        for r in rows
-    )
-    return HTMLResponse(f"""<!DOCTYPE html>
-<html lang="zh"><head><meta charset="utf-8"><title>Mem1 - All Memories</title>
-<style>body{{font-family:sans-serif;margin:20px}}table{{border-collapse:collapse;width:100%}}
-th,td{{border:1px solid #ddd;padding:8px;text-align:left;font-size:14px}}
-th{{background:#4CAF50;color:white}}tr:nth-child(even){{background:#f2f2f2}}</style></head>
-<body><h2>Mem1 - All Memories ({len(rows)})</h2>
-<table><thead><tr><th>ID</th><th>User</th><th>Agent</th><th>Content</th><th>Time</th></tr></thead>
-<tbody>{trs}</tbody></table></body></html>""")
+
 
 @app.post("/memory/add")
 async def add_memory(req: MemRequest, request: Request):
