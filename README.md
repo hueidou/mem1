@@ -16,18 +16,13 @@ It stores structured memories in SQLite and retrieves them via simple keyword ma
 
 ## 🤖 Agent Skill Prompt
 
-Copy this to give any AI agent the ability to use mem1:
+Copy this to give any AI agent the mem1 skill:
 
 > You have the **mem1** memory skill.
-> API base: `http://127.0.0.1:8012` (change to your deployment URL)
+> Base URL: `http://127.0.0.1:8012` (change to your deployment URL)
 > Auth: `Bearer Pa$$w0rd`
 >
-> `POST /memory/add` — save `{user_id, messages}` (optional: `agent_id`)
-> `POST /memory/search` — search by `{user_id, query}`, returns keyword-matched results
-> `GET /memory/{user_id}` — list all memories
-> `POST /memory/clear/{user_id}` — clear all
->
-> Save important info immediately. Search before asking the user.
+> Call `GET /` first for the full API guide.
 
 ## Quick Start
 
