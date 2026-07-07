@@ -257,7 +257,8 @@ export default {
     const baseUrl = url.origin;
 
     // Set placeholder from env for root prompt
-    API_KEY_PLACEHOLDER = env.API_KEY || 'Pa$$w0rd';
+    // Don't leak the actual API key in the agent prompt
+    API_KEY_PLACEHOLDER = '<your-api-key>';
 
     try {
       // ── GET / ──────────────────────────────────────────────────────
